@@ -13,35 +13,39 @@ public class Q8_MinMaxAmountAnoPais {
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] f = value.toString().split(";");
-            if(f[0].equalsIgnoreCase("Country") || f.length < 10) return;
+            if (f[0].equalsIgnoreCase("country_or_area") || f.length < 10) return;
 
             try {
                 int year = Integer.parseInt(f[1]);
-                double amount = f[8].isEmpty()?0:Double.parseDouble(f[8].replace(",", "."));
-                double price = f[5].isEmpty()?0:Double.parseDouble(f[5].replace(",", "."));
-                double weight = f[6].isEmpty()?0:Double.parseDouble(f[6].replace(",", "."));
+                double amount = f[8].isEmpty() ? 0 : Double.parseDouble(f[8].replace(",", "."));
+                double price = f[5].isEmpty() ? 0 : Double.parseDouble(f[5].replace(",", "."));
+                double weight = f[6].isEmpty() ? 0 : Double.parseDouble(f[6].replace(",", "."));
 
                 keyOut.set(year, f[0]);
                 t.set(f[0], year, f[2], f[3], f[4], price, weight, f[7], amount, f[9]);
                 context.write(keyOut, t);
-            } catch(Exception e){}
+            } catch (Exception e) {}
         }
     }
 
     public static class Reduce extends Reducer<AnoPaisWritable, TransacaoWritable, Text, Text> {
+        private static String formatNumber(double v) {
+            if (Double.isFinite(v) && v == Math.rint(v)) return String.format("%d", (long) Math.rint(v));
+            return String.format("%.2f", v);
+        }
+
         @Override
         protected void reduce(AnoPaisWritable key, Iterable<TransacaoWritable> values, Context context) throws IOException, InterruptedException {
             double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
-            TransacaoWritable minT = null, maxT = null;
 
-            for(TransacaoWritable t : values){
+            for (TransacaoWritable t : values) {
                 double a = t.getAmount();
-                if(a < min){ min = a; minT = t; }
-                if(a > max){ max = a; maxT = t; }
+                if (a < min) min = a;
+                if (a > max) max = a;
             }
 
-            if(minT != null) context.write(new Text(key.toString()+" MIN"), new Text(minT.toString()));
-            if(maxT != null) context.write(new Text(key.toString()+" MAX"), new Text(maxT.toString()));
+            context.write(null, new Text(String.format("%s %d Min: %s", key.getPais(), key.getAno(), formatNumber(min))));
+            context.write(null, new Text(String.format("%s %d Max: %s", key.getPais(), key.getAno(), formatNumber(max))));
         }
     }
 }

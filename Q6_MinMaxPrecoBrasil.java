@@ -26,17 +26,25 @@ public class Q6_MinMaxPrecoBrasil2016 {
     }
 
     public static class Reduce extends Reducer<Text, TransacaoWritable, Text, Text> {
+
+        private static String formatNumber(double v) {
+            if (Double.isFinite(v) && v == Math.rint(v)) return String.format("%d", (long) Math.rint(v));
+            return String.format("%.2f", v);
+        }
+
         @Override
         protected void reduce(Text key, Iterable<TransacaoWritable> values, Context context) throws IOException, InterruptedException {
             double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
             TransacaoWritable minT = null, maxT = null;
+
             for(TransacaoWritable t : values){
                 double p = t.getPrice();
                 if(p < min){ min = p; minT = t; }
                 if(p > max){ max = p; maxT = t; }
             }
-            if(minT != null) context.write(new Text("Mais barata"), new Text(minT.toString()));
-            if(maxT != null) context.write(new Text("Mais cara"), new Text(maxT.toString()));
+
+            if(minT != null) context.write(null, new Text(formatNumber(minT.getPrice())));
+            if(maxT != null) context.write(null, new Text(formatNumber(maxT.getPrice())));
         }
     }
 }

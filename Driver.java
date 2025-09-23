@@ -18,7 +18,7 @@ public class Driver {
         Configuration conf = new Configuration();
 
         // Diretório de entrada
-        Path inputDir = new Path("input/transactions"); // coloque seu diretório de CSVs
+        Path inputDir = new Path("input/transactions");
         // Diretórios de saída
         Path outQ1 = new Path("output/Q1_BrasilCount");
         Path outQ2 = new Path("output/Q2_PorAno");

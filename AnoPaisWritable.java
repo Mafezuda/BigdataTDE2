@@ -8,14 +8,18 @@ public class AnoPaisWritable implements WritableComparable<AnoPaisWritable> {
     private Text pais = new Text();
 
     public AnoPaisWritable() {}
-    public AnoPaisWritable(int ano, String pais){
+    public AnoPaisWritable(int ano, String pais) {
         this.ano.set(ano);
         this.pais.set(pais);
     }
 
-    public void set(int a, String p){ ano.set(a); pais.set(p); }
-    public int getAno(){ return ano.get(); }
-    public String getPais(){ return pais.toString(); }
+    public void set(int ano, String pais) {
+        this.ano.set(ano);
+        this.pais.set(pais);
+    }
+
+    public int getAno() { return ano.get(); }
+    public String getPais() { return pais.toString(); }
 
     @Override
     public void write(DataOutput out) throws IOException {
@@ -31,8 +35,8 @@ public class AnoPaisWritable implements WritableComparable<AnoPaisWritable> {
 
     @Override
     public int compareTo(AnoPaisWritable o) {
-        int c = ano.compareTo(o.ano);
-        return (c != 0) ? c : pais.compareTo(o.pais);
+        int cmp = ano.compareTo(o.ano);
+        return cmp != 0 ? cmp : pais.compareTo(o.pais);
     }
 
     @Override

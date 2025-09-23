@@ -16,7 +16,7 @@ public class SomaQtdWritable implements Writable {
     public double getSoma() { return soma; }
     public long getQtd() { return qtd; }
 
-    public void add(SomaQtdWritable o){
+    public void add(SomaQtdWritable o) {
         this.soma += o.soma;
         this.qtd  += o.qtd;
     }
@@ -30,6 +30,6 @@ public class SomaQtdWritable implements Writable {
     @Override
     public void readFields(DataInput in) throws IOException {
         soma = in.readDouble();
-        qtd  = in.readLong();
+        qtd = in.readLong();
     }
 }
